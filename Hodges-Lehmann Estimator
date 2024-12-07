@@ -1,0 +1,14 @@
+hodges_lehmann <- function(x, y) {
+  # Ensure inputs are numeric vectors
+  if (!is.numeric(x) || !is.numeric(y)) {
+    stop("Both x and y must be numeric vectors.")
+  }
+  
+  # Compute all pairwise differences between elements of x and y
+  pairwise_differences <- outer(x, y, FUN = "-")
+  
+  # Find the median of the pairwise differences
+  hl_estimate <- median(pairwise_differences)
+  
+  return(hl_estimate)
+}
