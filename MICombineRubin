@@ -1,0 +1,43 @@
+rubins_rules <- function(estimates, standard_errors) {
+  # Ensure inputs are numeric vectors
+  if (!is.numeric(estimates) || !is.numeric(standard_errors)) {
+    stop("Both estimates and standard_errors must be numeric vectors.")
+  }
+  
+  # Ensure the lengths of the inputs match
+  if (length(estimates) != length(standard_errors)) {
+    stop("The length of estimates and standard_errors must match.")
+  }
+  
+  # Number of imputations
+  m <- length(estimates)
+  
+  # Compute the pooled estimate (mean of estimates)
+  pooled_estimate <- mean(estimates)
+  
+  # Compute the within-imputation variance
+  within_variance <- mean(standard_errors^2)
+  
+  # Compute the between-imputation variance
+  between_variance <- var(estimates)
+  
+  # Total variance (Rubin's formula)
+  total_variance <- within_variance + (1 + 1 / m) * between_variance
+  
+  # Compute the pooled standard error
+  pooled_standard_error <- sqrt(total_variance)
+  
+  # Degrees of freedom for t-distribution
+  # Using Barnard-Rubin adjustment
+  df <- (m - 1) * (1 + (within_variance / ((1 + 1 / m) * between_variance)))^2
+  
+  # Return results as a list
+  return(list(
+    pooled_estimate = pooled_estimate,
+    pooled_standard_error = pooled_standard_error,
+    total_variance = total_variance,
+    within_variance = within_variance,
+    between_variance = between_variance,
+    degrees_of_freedom = df
+  ))
+}
